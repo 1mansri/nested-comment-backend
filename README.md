@@ -13,6 +13,7 @@ A robust backend API for a nested commenting system built with TypeScript, Drizz
 - ✅ **Upvoting System**: Toggle upvotes on comments
 - ✅ **Comment Sorting**: Sort by upvotes, newest, or oldest
 - ✅ **Soft Deletion**: Non-destructive deletion for posts and comments
+- ✅ **User Data Population**: Posts and comments include complete user/author information
 
 ### Advanced Features
 
@@ -20,6 +21,7 @@ A robust backend API for a nested commenting system built with TypeScript, Drizz
 - ✅ **Clerk Webhook Integration**: Automatic user sync from Clerk
 - ✅ **Role-Based Access Control**: User and admin roles
 - ✅ **Webhook Signature Verification**: Secure webhook handling with Svix
+- ✅ **Optimized API Responses**: Single-request data fetching with populated user objects
 
 ## Tech Stack
 
@@ -125,15 +127,15 @@ See [API_DOCUMENTATION.md](./API_DOCUMENTATION.md) for complete API reference in
 **Post Management**
 
 - `POST /create-post` - Create a post
-- `GET /get-recent-post` - Get 15 most recent posts
-- `POST /get-user-post` - Get posts by user
+- `GET /get-recent-post` - Get 15 most recent posts (with author data)
+- `POST /get-user-post` - Get posts by user (with author data)
 - `POST /delete-post` - Soft delete a post
 
 **Comment Management**
 
-- `POST /create-comment` - Create comment or reply
-- `POST /get-post-comments` - Get all comments for a post (with sorting)
-- `POST /get-comment-reply` - Get replies to a comment (with sorting)
+- `POST /create-comment` - Create comment or reply (returns with user data)
+- `POST /get-post-comments` - Get all comments for a post with user data (with sorting)
+- `POST /get-comment-reply` - Get replies to a comment with user data (with sorting)
 - `POST /upvote-comment` - Toggle upvote on a comment
 - `POST /delete-comment` - Soft delete a comment
 
@@ -260,6 +262,52 @@ docker-compose up -d
 - ✅ Role-based authorization for deletions
 - ✅ Prepared statements via Drizzle ORM (SQL injection protection)
 - ✅ Soft deletion (data preservation)
+
+## API Enhancements
+
+### User Data Population (New!)
+
+All post and comment endpoints now automatically include complete user information:
+
+**Posts include `author` object:**
+
+```json
+{
+    "id": "post-123",
+    "title": "My Post",
+    "author_id": "user-456",
+    "author": {
+        "id": "user-456",
+        "name": "John Doe",
+        "email": "john@example.com",
+        "avatar_url": "https://...",
+        "role": "user"
+    }
+}
+```
+
+**Comments include `user` object:**
+
+```json
+{
+    "id": "comment-789",
+    "text": "Great post!",
+    "user_id": "user-456",
+    "user": {
+        "id": "user-456",
+        "name": "John Doe",
+        "avatar_url": "https://...",
+        "role": "user"
+    }
+}
+```
+
+**Benefits:**
+
+- ✅ No extra API calls needed to fetch user details
+- ✅ Better frontend performance
+- ✅ Display usernames, avatars, and admin badges immediately
+- ✅ Single-request data fetching
 
 ## Troubleshooting
 

@@ -14,6 +14,15 @@ The API uses Clerk for user authentication. The `user_id` should be obtained fro
 
 For admin operations, ensure the user's `public_metadata.role` in Clerk is set to `"admin"`.
 
+## User Data Population
+
+All endpoints that return posts or comments now include populated user/author objects. This means:
+
+- **Post endpoints** (`/get-recent-post`, `/get-user-post`) include an `author` object with complete user information
+- **Comment endpoints** (`/get-post-comments`, `/get-comment-reply`, `/create-comment`) include a `user` object with complete user information
+
+This eliminates the need for separate API calls to fetch user details and improves frontend performance by providing all necessary data in a single request.
+
 ---
 
 ## User Management
@@ -181,7 +190,7 @@ CLERK_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx
 
 **Endpoint:** `GET /get-recent-post`
 
-**Description:** Retrieves the 15 most recent non-deleted posts.
+**Description:** Retrieves the 15 most recent non-deleted posts with author information.
 
 **Response (200):**
 
@@ -191,9 +200,20 @@ CLERK_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx
         "id": "660e8400-e29b-41d4-a716-446655440000",
         "title": "My First Post",
         "body": "This is the content of my post.",
+        "image_url": "https://example.com/image.jpg",
         "author_id": "550e8400-e29b-41d4-a716-446655440000",
         "is_deleted": false,
-        "created_at": "2025-10-16T12:00:00Z"
+        "created_at": "2025-10-16T12:00:00Z",
+        "author": {
+            "id": "550e8400-e29b-41d4-a716-446655440000",
+            "clerk_user_id": "user_2abc123def456",
+            "name": "John Doe",
+            "email": "john@example.com",
+            "avatar_url": "https://example.com/avatar.jpg",
+            "role": "user",
+            "is_deleted": false,
+            "created_at": "2025-10-16T12:00:00Z"
+        }
     }
 ]
 ```
@@ -204,7 +224,7 @@ CLERK_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx
 
 **Endpoint:** `POST /get-user-post`
 
-**Description:** Retrieves all posts by a specific user.
+**Description:** Retrieves all posts by a specific user with author information.
 
 **Request Body:**
 
@@ -222,9 +242,20 @@ CLERK_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx
         "id": "660e8400-e29b-41d4-a716-446655440000",
         "title": "My First Post",
         "body": "This is the content of my post.",
+        "image_url": "https://example.com/image.jpg",
         "author_id": "550e8400-e29b-41d4-a716-446655440000",
         "is_deleted": false,
-        "created_at": "2025-10-16T12:00:00Z"
+        "created_at": "2025-10-16T12:00:00Z",
+        "author": {
+            "id": "550e8400-e29b-41d4-a716-446655440000",
+            "clerk_user_id": "user_2abc123def456",
+            "name": "John Doe",
+            "email": "john@example.com",
+            "avatar_url": "https://example.com/avatar.jpg",
+            "role": "user",
+            "is_deleted": false,
+            "created_at": "2025-10-16T12:00:00Z"
+        }
     }
 ]
 ```
@@ -271,7 +302,7 @@ CLERK_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx
 
 **Endpoint:** `POST /create-comment`
 
-**Description:** Creates a new comment on a post or replies to an existing comment.
+**Description:** Creates a new comment on a post or replies to an existing comment. Returns the created comment with user information.
 
 **Request Body:**
 
@@ -295,7 +326,17 @@ CLERK_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx
     "text": "This is my comment",
     "upvotes": 0,
     "is_deleted": false,
-    "created_at": "2025-10-16T12:00:00Z"
+    "created_at": "2025-10-16T12:00:00Z",
+    "user": {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "clerk_user_id": "user_2abc123def456",
+        "name": "John Doe",
+        "email": "john@example.com",
+        "avatar_url": "https://example.com/avatar.jpg",
+        "role": "user",
+        "is_deleted": false,
+        "created_at": "2025-10-16T12:00:00Z"
+    }
 }
 ```
 
@@ -305,7 +346,7 @@ CLERK_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx
 
 **Endpoint:** `POST /get-post-comments`
 
-**Description:** Retrieves all comments for a specific post with optional sorting.
+**Description:** Retrieves all comments for a specific post with optional sorting. Includes user information for each comment.
 
 **Request Body:**
 
@@ -328,7 +369,17 @@ CLERK_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx
         "text": "This is my comment",
         "upvotes": 5,
         "is_deleted": false,
-        "created_at": "2025-10-16T12:00:00Z"
+        "created_at": "2025-10-16T12:00:00Z",
+        "user": {
+            "id": "550e8400-e29b-41d4-a716-446655440000",
+            "clerk_user_id": "user_2abc123def456",
+            "name": "John Doe",
+            "email": "john@example.com",
+            "avatar_url": "https://example.com/avatar.jpg",
+            "role": "user",
+            "is_deleted": false,
+            "created_at": "2025-10-16T12:00:00Z"
+        }
     }
 ]
 ```
@@ -345,7 +396,7 @@ CLERK_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx
 
 **Endpoint:** `POST /get-comment-reply`
 
-**Description:** Retrieves all replies to a specific comment with optional sorting.
+**Description:** Retrieves all replies to a specific comment with optional sorting. Includes user information for each reply.
 
 **Request Body:**
 
@@ -369,7 +420,17 @@ CLERK_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx
         "text": "This is a reply",
         "upvotes": 2,
         "is_deleted": false,
-        "created_at": "2025-10-16T12:30:00Z"
+        "created_at": "2025-10-16T12:30:00Z",
+        "user": {
+            "id": "550e8400-e29b-41d4-a716-446655440000",
+            "clerk_user_id": "user_2abc123def456",
+            "name": "John Doe",
+            "email": "john@example.com",
+            "avatar_url": "https://example.com/avatar.jpg",
+            "role": "user",
+            "is_deleted": false,
+            "created_at": "2025-10-16T12:00:00Z"
+        }
     }
 ]
 ```

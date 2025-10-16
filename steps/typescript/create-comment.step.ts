@@ -6,8 +6,9 @@ import {
 } from 'motia';
 import { z } from 'zod';
 import db from '../../src/db/index';
-import { comments, TNewComment } from '../../src/db/schemas/schema';
+import { comments, users, TNewComment } from '../../src/db/schemas/schema';
 import { randomUUID } from 'crypto';
+import { eq } from 'drizzle-orm';
 
 const createNewCommentSchema = z.object({
     post_id: z.string().uuid(),
@@ -15,6 +16,18 @@ const createNewCommentSchema = z.object({
     user_id: z.string().uuid(),
     text: z.string(),
     upvotes: z.number().int().optional(),
+});
+
+// User schema for nested user object
+const userSchema = z.object({
+    id: z.string().uuid(),
+    clerk_user_id: z.string(),
+    name: z.string(),
+    email: z.string(),
+    avatar_url: z.string().nullable(),
+    role: z.string(),
+    is_deleted: z.boolean(),
+    created_at: z.date(),
 });
 
 const responseSchema = z.object({
@@ -26,6 +39,7 @@ const responseSchema = z.object({
     user_id: z.string().uuid(),
     created_at: z.date(),
     is_deleted: z.boolean(),
+    user: userSchema.nullable(),
 });
 
 export const config: ApiRouteConfig = {
@@ -44,7 +58,7 @@ export const config: ApiRouteConfig = {
 
 export const handler: ApiRouteHandler<
     z.infer<typeof createNewCommentSchema>,
-    { status: 200; body: TNewComment } | { status: 400; body: { error: string } }
+    { status: 200; body: any } | { status: 400; body: { error: string } }
 > = async (req: ApiRequest<z.infer<typeof createNewCommentSchema>>, { logger }) => {
     const data = req.body;
 
@@ -70,7 +84,16 @@ export const handler: ApiRouteHandler<
     // Insert and return the created comment
     const [createdComment] = await db.insert(comments).values(commentData).returning();
 
-    logger.info('Comment created', { comment: createdComment.text });
+    // Fetch user details
+    const [user] = await db.select().from(users).where(eq(users.id, data.user_id));
 
-    return { status: 200, body: createdComment };
+    // Return comment with user object
+    const commentWithUser = {
+        ...createdComment,
+        user: user || null,
+    };
+
+    logger.info('Comment created', { comment: createdComment.text, userId: data.user_id });
+
+    return { status: 200, body: commentWithUser };
 };
