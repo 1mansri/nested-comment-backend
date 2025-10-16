@@ -10,7 +10,8 @@ import { users, TNewUser, TUser } from '../../src/db/schemas/schema';
 import { eq } from 'drizzle-orm';
 
 const GetUserSchema = z.object({
-    clerk_user_id: z.string(),
+    clerk_user_id: z.string().optional(),
+    id: z.string().uuid().optional(),
 });
 
 const responseSchema = z.object({
@@ -47,7 +48,14 @@ export const handler: ApiRouteHandler<
     logger.info('Attempting to get user', { clerkId: data.clerk_user_id });
 
     // Select and return the user
-    const [user] = await db.select().from(users).where(eq(users.clerk_user_id, data.clerk_user_id));
+    if (!data.clerk_user_id && !data.id) {
+        return { status: 400, body: { error: 'clerk_user_id or id is required' } };
+    }
+    
+    const query = data.clerk_user_id 
+        ? eq(users.clerk_user_id, data.clerk_user_id)
+        : eq(users.id, data.id as string);
+    const [user] = await db.select().from(users).where(query);
 
     if (!user) {
         return { status: 400, body: { error: 'User not found' } };
