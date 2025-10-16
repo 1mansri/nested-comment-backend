@@ -7,7 +7,7 @@ import {
 import { z } from 'zod';
 import db from '../../src/db/index';
 import { comments, TComment } from '../../src/db/schemas/schema';
-import { count, eq, desc, asc } from 'drizzle-orm';
+import { eq, desc, asc } from 'drizzle-orm';
 
 const createNewCommentSchema = z.object({
     post_id: z.string().uuid(),

@@ -3,8 +3,8 @@ services:
     image: postgres
     environment:
       POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_USER: 1mansri
+      POSTGRES_DB: nested_comments
     ports:
       - 5432:5432
     volumes:
