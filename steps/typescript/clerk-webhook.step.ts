@@ -97,8 +97,7 @@ export const handler: ApiRouteHandler<
                 }
 
                 const name =
-                    userData.username ||
-                    `${userData.first_name || ''} ${userData.last_name || ''}`.trim() ||
+                    `${userData.first_name || ''} ${userData.last_name || ''}`.trim() || userData.username ||
                     'Anonymous User';
 
                 // Get role from public_metadata, default to 'user'
