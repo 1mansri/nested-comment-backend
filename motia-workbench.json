@@ -19,5 +19,46 @@
         "y": 193
       }
     }
+  },
+  {
+    "id": "PostManagement",
+    "config": {
+      "steps\\typescript\\upvote-comment.step.ts": {
+        "x": 13,
+        "y": 0
+      },
+      "steps\\typescript\\get-user-post.step.ts": {
+        "x": 17,
+        "y": 151
+      },
+      "steps\\typescript\\get-recent-post.step.ts": {
+        "x": 13,
+        "y": 302
+      },
+      "steps\\typescript\\get-post-comment.step.ts": {
+        "x": 0,
+        "y": 453
+      },
+      "steps\\typescript\\get-comment-reply.step.ts": {
+        "x": 0,
+        "y": 604
+      },
+      "steps\\typescript\\delete-post.step.ts": {
+        "x": 26,
+        "y": 755
+      },
+      "steps\\typescript\\delete-comment.step.ts": {
+        "x": 13,
+        "y": 906
+      },
+      "steps\\typescript\\create-post.step.ts": {
+        "x": 26,
+        "y": 1057
+      },
+      "steps\\typescript\\create-comment.step.ts": {
+        "x": 13,
+        "y": 1208
+      }
+    }
   }
 ]

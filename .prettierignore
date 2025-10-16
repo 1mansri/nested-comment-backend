@@ -1,0 +1,10 @@
+playground/types.d.ts
+*.mdx
+*.config.ts
+*.config.cjs
+*.config.js
+*.config.mjs
+node_modules
+dist
+build
+

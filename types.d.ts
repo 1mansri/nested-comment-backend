@@ -12,8 +12,16 @@ declare module 'motia' {
   }
 
   interface Handlers {
-    'CreatePost': ApiRouteHandler<{ title: string; author_id: string; body: string; image_url?: unknown }, ApiResponse<201, { id: string; title: string; body: string; author_id: string }> | ApiResponse<400, { error: string }>, never>
+    'UpvoteComment': ApiRouteHandler<{ comment_id: string; user_id: string }, ApiResponse<200, { comment_id: string; upvotes: unknown; message: string }> | ApiResponse<400, { error: string }>, never>
     'GetUser': ApiRouteHandler<{ clerk_user_id: string }, ApiResponse<201, { id: string; clerk_user_id: string; name: string; email: string; avatar_url: unknown; role: string; is_deleted: boolean; created_at: string }> | ApiResponse<400, { error: string }>, never>
+    'GetUserPost': ApiRouteHandler<{ author_id: string }, ApiResponse<200, Array<{ id: string; title: string; body: string; author_id: string; is_deleted: boolean; created_at: string }>> | ApiResponse<400, { error: string }>, never>
+    'ClerkWebhook': ApiRouteHandler<Record<string, unknown>, ApiResponse<200, { success: boolean; message: string }> | ApiResponse<400, { error: string }>, never>
+    'GetPostComments': ApiRouteHandler<{ post_id: string; sort_by?: 'upvotes' | 'created_at' | 'oldest' }, ApiResponse<200, Array<{ id: string; post_id: string; parent_comment_id?: string | unknown; user_id: string; text: string; upvotes?: unknown }>> | ApiResponse<400, { error: string }>, never>
+    'GetCommentReply': ApiRouteHandler<{ post_id: string; parent_comment_id: string | unknown; sort_by?: 'upvotes' | 'created_at' | 'oldest' }, ApiResponse<200, Array<{ id: string; post_id: string; parent_comment_id?: string | unknown; user_id: string; text: string; upvotes?: unknown }>> | ApiResponse<400, { error: string }>, never>
+    'DeletePost': ApiRouteHandler<{ post_id: string; user_id: string }, ApiResponse<200, { message: string; post_id: string }> | ApiResponse<400, { error: string }> | ApiResponse<403, { error: string }>, never>
+    'DeleteComment': ApiRouteHandler<{ comment_id: string; user_id: string }, ApiResponse<200, { message: string; comment_id: string }> | ApiResponse<400, { error: string }> | ApiResponse<403, { error: string }>, never>
     'CreateUser': ApiRouteHandler<{ name: string; clerk_user_id: string; email: string; avatar_url?: unknown }, ApiResponse<201, { clerk_user_id: string; name: string; email: string; avatar_url: unknown }> | ApiResponse<400, { error: string }>, never>
+    'CreatePost': ApiRouteHandler<{ title: string; author_id: string; body: string; image_url?: unknown }, ApiResponse<201, { id: string; title: string; body: string; author_id: string }> | ApiResponse<400, { error: string }>, never>
+    'CreateComment': ApiRouteHandler<{ post_id: string; parent_comment_id?: string | unknown; user_id: string; text: string; upvotes?: unknown }, ApiResponse<200, { id: string; text: string; upvotes: unknown; post_id: string; parent_comment_id?: string | unknown; user_id: string; created_at: string; is_deleted: boolean }> | ApiResponse<400, { error: string }>, never>
   }
 }
