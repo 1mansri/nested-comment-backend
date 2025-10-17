@@ -17,7 +17,10 @@ lerna-debug.log*
 .pnp.*
 .pnp.json
 .idea
-.vscode
 *.sublime-workspace
 *.sublime-project
 *.log
+temp_auto_push.bat
+temp_interactive_push.bat
+.gitignore
+branch_structure.json
